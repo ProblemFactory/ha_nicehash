@@ -17,7 +17,7 @@ from custom_components.nicehash.const import (
     CONFIG_ORG_ID,
     CONFIG_SECRET,
     CONFIG_UPDATE_INTERVAL,
-    DEFAULT_SCAN_INTERVAL_MINUTES,
+    DEFAULT_SCAN_INTERVAL_SECONDS,
     NICEHASH_API_ENDPOINT,
     DOMAIN,
     SENSORS,
@@ -44,12 +44,12 @@ async def _update_coordinator(hass: HomeAssistant, config_entry: ConfigEntry):
         CONFIG_UPDATE_INTERVAL
     ) != config_entry.options.get(CONFIG_UPDATE_INTERVAL):
         coordinator.update_interval = timedelta(
-            minutes=config_entry.options[CONFIG_UPDATE_INTERVAL]
+            seconds=config_entry.options[CONFIG_UPDATE_INTERVAL]
         )
         await coordinator.async_request_refresh()
         new_data = config_entry.data.copy()
         new_data[CONFIG_UPDATE_INTERVAL] = config_entry.options.get(
-            CONFIG_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES
+            CONFIG_UPDATE_INTERVAL, DEFAULT_SCAN_INTERVAL_SECONDS
         )
         hass.config_entries.async_update_entry(
             entry=config_entry,
@@ -100,11 +100,11 @@ async def async_migrate_entry(_, config_entry):
     data = config_entry.data
     version = config_entry.version
 
-    if version == 1:
+    if version < 3:
         new_data = {**data}
-        new_data[CONFIG_UPDATE_INTERVAL] = DEFAULT_SCAN_INTERVAL_MINUTES
+        new_data[CONFIG_UPDATE_INTERVAL] = DEFAULT_SCAN_INTERVAL_SECONDS
         config_entry.data = {**new_data}
-        version = config_entry.version = 2
+        version = config_entry.version = 3
 
     _LOGGER.info(
         "Migration of NiceHash config to version %s successful", config_entry.version

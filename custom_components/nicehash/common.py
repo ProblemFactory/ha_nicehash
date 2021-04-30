@@ -32,7 +32,7 @@ class NiceHashSensorDataUpdateCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(minutes=update_interval),
+            update_interval=timedelta(seconds=update_interval),
             update_method=self._async_update_data,
         )
         self._api = api
