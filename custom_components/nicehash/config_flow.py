@@ -12,7 +12,7 @@ from custom_components.nicehash.const import (
     CONFIG_ORG_ID,
     CONFIG_SECRET,
     CONFIG_UPDATE_INTERVAL,
-    DEFAULT_SCAN_INTERVAL_MINUTES,
+    DEFAULT_SCAN_INTERVAL_SECONDS,
     DOMAIN,
     NICEHASH_API_ENDPOINT,
 )
@@ -27,8 +27,8 @@ DATA_SCHEMA = {
     vol.Required(CONFIG_SECRET): str,
     vol.Required(CONFIG_ORG_ID): str,
     vol.Required(CONFIG_FIAT, default="USD"): str,
-    vol.Required(CONFIG_UPDATE_INTERVAL, default=DEFAULT_SCAN_INTERVAL_MINUTES): All(
-        int, Range(min=1, max=30)
+    vol.Required(CONFIG_UPDATE_INTERVAL, default=DEFAULT_SCAN_INTERVAL_SECONDS): All(
+        int, Range(min=1, max=1800)
     ),
 }
 
