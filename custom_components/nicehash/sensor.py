@@ -230,11 +230,11 @@ class NiceHashSensor(CoordinatorEntity, Entity):
         super().__init__(coordinator)
         self._rig_id = rigId
         self._info_type = list(info_type.keys())[0]
+        self._info = info_type[self._info_type]
         if ":" in self._info_type:
             self._info_type, self._info_subtype = self._info_type.split(':')
         else:
             self._info_subtype = ''
-        self._info = info_type[self._info_type]
         self._data_type = RIGS_OBJ
         self._config_entry = config_entry
         self._convert = convert
