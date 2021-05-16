@@ -41,7 +41,10 @@ RIG_DATA_ATTRIBUTES_NON_BTC = [
 
 RIG_STATS_ATTRIBUTES = [{"speedAccepted": {}}, {"speedRejectedTotal": {}}]
 DEVICE_STATS_ATTRIBUTES = [
-    {"temperature": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE}}, 
+    {"temperature:core": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE}}, 
+    {"temperature:mem": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE}}, 
+    {"load:core": {"unit": "%", "device_class": "load"}},
+    {"load:mem": {"unit": "%", "device_class": "load"}},
     {"powerUsage": {"unit": POWER_WATT, "device_class": DEVICE_CLASS_POWER}}
 ]
 
@@ -227,6 +230,10 @@ class NiceHashSensor(CoordinatorEntity, Entity):
         super().__init__(coordinator)
         self._rig_id = rigId
         self._info_type = list(info_type.keys())[0]
+        if ":" in self._info_type:
+            self._info_type, self._info_subtype = self._info_type.split(':')
+        else:
+            self._info_subtype = ''
         self._info = info_type[self._info_type]
         self._data_type = RIGS_OBJ
         self._config_entry = config_entry
@@ -396,7 +403,10 @@ class NiceHashDeviceStatSensor(NiceHashSensor):
         if rig is not None:
             dev = self.get_device()
             if dev is not None:
-                return f"NH - {rig.get('name')} - {dev.get('name')} - {self._info_type}"
+                if self._info_subtype:
+                    return f"NH - {rig.get('name')} - {dev.get('name')} - {self._info_type} - {self._info_subtype}"
+                else:
+                    return f"NH - {rig.get('name')} - {dev.get('name')} - {self._info_type}"
         return None
 
     @property
@@ -405,8 +415,11 @@ class NiceHashDeviceStatSensor(NiceHashSensor):
         dev = self.get_device()
         if dev is not None:
             state = dev.get(self._info_type)
-            if self._info_type == "temperature" and state > 500:
-                return state % 65536
+            if self._info_type in ["temperature", "load"] and state > 500:
+                if self._info_subtype == 'core':
+                    return state % 65536
+                else:
+                    return state // 65536
             if state is not -1:
                 return state
         return None
