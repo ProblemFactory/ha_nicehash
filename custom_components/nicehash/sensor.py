@@ -381,7 +381,7 @@ class NiceHashDeviceStatSensor(NiceHashSensor):
 
     @property
     def unique_id(self):
-        unique_id = f"nh-{self._rig_id}-{self._id}-{self._info_type}"
+        unique_id = f"nh-{self._rig_id}-{self._id}-{self._info_type}" + (f"-{self._info_subtype}" if self._info_subtype else "")
         return unique_id
 
     def get_device(self):
