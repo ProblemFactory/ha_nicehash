@@ -41,8 +41,8 @@ RIG_DATA_ATTRIBUTES_NON_BTC = [
 
 RIG_STATS_ATTRIBUTES = [{"speedAccepted": {}}, {"speedRejectedTotal": {}}]
 DEVICE_STATS_ATTRIBUTES = [
-    {"temperature:core": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE, "getter": lambda dev: dev['temperature']%65536 if 'temperature' in dev else None}}, 
-    {"temperature:mem": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE, "getter": lambda dev: dev['temperature']//65536 if 'temperature' in dev else None}}, 
+    {"temperature:core": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE, "getter": lambda dev: dev['temperature']%65536 if dev['temperature']>500 else dev['temperature']}}, 
+    {"temperature:mem": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE, "getter": lambda dev: dev['temperature']//65536 if dev['temperature']>500 else dev['temperature']}}, 
     {"load:core": {"unit": "%", "device_class": "load", "getter": lambda dev: dev['load']%65536 if 'load' in dev else None}},
     {"load:mem": {"unit": "%", "device_class": "load", "getter": lambda dev: dev['load']//65536 if 'load' in dev else None}},
     {"speed": {"unit": "MH/s", "device_class": "speed", "getter": lambda dev: dev['speeds'][0]['speed'] if 'speeds' in dev else None}},
