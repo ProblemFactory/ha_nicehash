@@ -41,10 +41,11 @@ RIG_DATA_ATTRIBUTES_NON_BTC = [
 
 RIG_STATS_ATTRIBUTES = [{"speedAccepted": {}}, {"speedRejectedTotal": {}}]
 DEVICE_STATS_ATTRIBUTES = [
-    {"temperature:core": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE}}, 
-    {"temperature:mem": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE}}, 
-    {"load:core": {"unit": "%", "device_class": "load"}},
-    {"load:mem": {"unit": "%", "device_class": "load"}},
+    {"temperature:core": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE, "getter": lambda dev: dev['temperature']%65536}}, 
+    {"temperature:mem": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE, "getter": lambda dev: dev['temperature']//65536}}, 
+    {"load:core": {"unit": "%", "device_class": "load", "getter": lambda dev: dev['load']%65536}},
+    {"load:mem": {"unit": "%", "device_class": "load", "getter": lambda dev: dev['load']//65536}},
+    {"speed": {"unit": "MH/s", "device_class": "speed", "getter": lambda dev: dev['speeds']['speed']}},
     {"powerUsage": {"unit": POWER_WATT, "device_class": DEVICE_CLASS_POWER}}
 ]
 
@@ -414,12 +415,10 @@ class NiceHashDeviceStatSensor(NiceHashSensor):
         """State of the sensor."""
         dev = self.get_device()
         if dev is not None:
-            state = dev.get(self._info_type)
-            if self._info_type in ["temperature", "load"] and state > 500:
-                if self._info_subtype == 'core':
-                    return state % 65536
-                else:
-                    return state // 65536
+            if 'getter' in self._info:
+                state = self._info['getter'](dev)
+            else:
+                state = dev.get(self._info_type)
             if state is not -1:
                 return state
         return None
