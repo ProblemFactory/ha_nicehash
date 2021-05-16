@@ -45,7 +45,7 @@ DEVICE_STATS_ATTRIBUTES = [
     {"temperature:mem": {"unit": TEMP_CELSIUS, "device_class": DEVICE_CLASS_TEMPERATURE, "getter": lambda dev: dev['temperature']//65536}}, 
     {"load:core": {"unit": "%", "device_class": "load", "getter": lambda dev: dev['load']%65536}},
     {"load:mem": {"unit": "%", "device_class": "load", "getter": lambda dev: dev['load']//65536}},
-    {"speed": {"unit": "MH/s", "device_class": "speed", "getter": lambda dev: dev['speeds']['speed']}},
+    {"speed": {"unit": "MH/s", "device_class": "speed", "getter": lambda dev: dev['speeds'][0]['speed']}},
     {"powerUsage": {"unit": POWER_WATT, "device_class": DEVICE_CLASS_POWER}}
 ]
 
